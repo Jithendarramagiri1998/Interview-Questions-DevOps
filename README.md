@@ -1168,6 +1168,207 @@ Use `with_items` or `loop` to iterate over a list of items in a task.
         name: tomcat
         state: restarted
 ```
+# Kubernetes Interview Questions and Answers
+
+## 1. What is Kubernetes?
+Kubernetes is an open-source container orchestration platform that automates the deployment, scaling, and management of containerized applications. It provides features such as service discovery, load balancing, self-healing, and automated rollouts and rollbacks.
+
+---
+
+## 2. Kubernetes Deployment Manifest (Nginx Pod with 3 Replicas)
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+```
+
+---
+
+## 3. Kubernetes ConfigMap YAML (Database Configuration)
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-config
+data:
+  DB_HOST: db.example.com
+  DB_PORT: "5432"
+```
+
+---
+
+## 4. What is HPA (Horizontal Pod Autoscaler)?
+Horizontal Pod Autoscaler (HPA) automatically scales the number of pods in a deployment based on CPU or memory usage. It ensures that applications handle varying workloads efficiently. It is configured using the `kubectl autoscale` command or a YAML file.
+
+---
+
+## 5. Scale Up Replicas in a Deployment
+```bash
+kubectl scale deployment nginx-deployment --replicas=5
+```
+
+---
+
+## 6. Copy Files from Host to a Container
+```bash
+kubectl cp /path/to/local/file <pod-name>:/path/to/container/destination
+```
+Example:
+```bash
+kubectl cp config.json my-pod:/etc/config.json
+```
+
+---
+
+## 7. Restart a Pod Without Stopping the Deployment
+```bash
+kubectl delete pod <pod-name>
+```
+OR
+```bash
+kubectl rollout restart deployment <deployment-name>
+```
+
+---
+
+## 8. How Do Pods Communicate with Each Other?
+- **Pod IP Addresses** (direct communication within the same namespace).
+- **Services** (ClusterIP, NodePort, LoadBalancer) to expose pods to other pods or external traffic.
+- **DNS-Based Service Discovery** (via CoreDNS) to resolve service names to IP addresses.
+
+---
+
+## 9. Security Best Practices for Kubernetes Cluster
+- Use **Role-Based Access Control (RBAC)** to limit user and service permissions.
+- Enable **Network Policies** to restrict pod-to-pod communication.
+- Scan container images for vulnerabilities.
+- Use **secrets management** for storing sensitive data.
+- Enable **audit logging** to track user activities.
+- Implement **Pod Security Policies** or **Pod Security Admission** for security constraints.
+- Restrict hostPath and privileged containers.
+
+---
+
+## 10. Ensuring High Availability and Scalability
+- Deploy applications as **ReplicaSets** or **Deployments** with multiple replicas.
+- Use **Horizontal Pod Autoscaler (HPA)** to scale pods based on resource usage.
+- Implement **Load Balancers** and **Ingress Controllers** for traffic distribution.
+- Use **Persistent Volumes** for stateful applications.
+- Ensure multi-zone deployment for resilience.
+
+---
+
+## 11. Troubleshooting a Pod in a **Pending** State
+```bash
+kubectl get pods
+kubectl describe pod <pod-name>
+kubectl get nodes
+kubectl get events --sort-by=.metadata.creationTimestamp
+```
+- Check node status and resource availability.
+- Verify scheduling constraints or taints on nodes.
+
+---
+
+## 12. Steps to Create a Kubernetes Cluster (Using kubeadm)
+1. Install **Docker**, **kubeadm**, **kubelet**, and **kubectl**.
+2. Initialize the cluster on the master node:
+   ```bash
+   sudo kubeadm init
+   ```
+3. Set up **kubectl** for cluster management:
+   ```bash
+   mkdir -p $HOME/.kube
+   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+   sudo chown $(id -u):$(id -g) $HOME/.kube/config
+   ```
+4. Join worker nodes using the token provided:
+   ```bash
+   kubeadm join <master-ip>:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash>
+   ```
+5. Deploy a networking solution:
+   ```bash
+   kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+   ```
+6. Verify cluster status:
+   ```bash
+   kubectl get nodes
+   ```
+
+---
+
+## 13. Critical Issues Faced in a Kubernetes Cluster
+- **Pod stuck in Pending state** due to insufficient resources.
+- **CrashLoopBackOff** errors due to misconfigured application parameters.
+- **Network issues** causing service communication failures.
+- **Kubernetes API unresponsive** due to high memory usage.
+- **Persistent Volume issues** causing data loss or unavailability.
+
+---
+
+## 14. Indentation Errors in YAML
+Indentation errors occur when YAML files are not formatted correctly. YAML uses spaces, not tabs.
+
+**Incorrect YAML (with tabs or missing spaces)**:
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+  - name: mycontainer
+    image: nginx
+    ports:
+    - containerPort: 80
+      protocol: TCP  # Indentation error here
+```
+
+**Correct YAML (proper indentation using spaces)**:
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+    - name: mycontainer
+      image: nginx
+      ports:
+        - containerPort: 80
+          protocol: TCP
+```
+
+---
+
+## 15. Entering a Running Pod in Kubernetes
+```bash
+kubectl exec -it <pod-name> -- /bin/sh
+```
+If the container has bash:
+```bash
+kubectl exec -it <pod-name> -- /bin/bash
+```
+To check all running pods:
+```bash
+kubectl get pods
+
 
 
 
